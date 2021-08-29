@@ -32,7 +32,6 @@ userRouters.post ("/login", (req, res) => {
             })
             return
         }
-        
 
         const isPasswordValid = validatePassword(password, user.hashedPwd, user.salt)
         if(!isPasswordValid){
