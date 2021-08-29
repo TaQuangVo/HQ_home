@@ -11,6 +11,9 @@ const userSchemma = mongoose.Schema({
     username: String,
     hashedPwd: String,
     salt:String,
+    role: String,
+},{
+    timestamps:true
 })
 const userModel = dbConnection.model("users", userSchemma)
 

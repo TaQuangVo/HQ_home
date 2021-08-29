@@ -17,12 +17,24 @@ const hashPwdWithSalt = (password) => {
     return { hashedPwd, salt}
 }
 
+const validatePassword = (password, hashedPassword, salt) => {
+
+    const passwordValidate = crypto.pbkdf2Sync(password, salt, 10000, 64, "sha512").toString("hex")
+
+    if(hashedPassword == passwordValidate){
+        return true
+    }else{
+        return false
+    }
+}
+
 const issueToken = (user) => {
     const userId = user._id
     const expiresIn = "1d"
 
     const payload = {
         sub:userId,
+        role:user.role,
         iat:Date.now()
     }
 
@@ -30,8 +42,6 @@ const issueToken = (user) => {
         expiresIn:expiresIn,
         algorithm:"RS256"
     }
-
-    console.log(privateKeyPath)
 
     const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, signOptions)
 
@@ -41,8 +51,21 @@ const issueToken = (user) => {
     }
 }
 
+const validateToken = (token) => {
+    try {
+        const tokenData = jsonwebtoken.verify(token,PUB_KEY,{algorithms:"RS256"})
+        return tokenData
+    } catch(err) {
+        return(false)
+    }
+
+
+}
+
 
 module.exports = {
     issueToken,
-    hashPwdWithSalt
+    hashPwdWithSalt,
+    validatePassword,
+    validateToken
 }
