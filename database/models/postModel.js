@@ -5,7 +5,7 @@ const dbConnection = require("../index")
 const postSchema = mongoose.Schema({
     author: String,
     isPublic: Boolean,
-    discription: String,
+    description: String,
     imageUrl: String,
     likeCount: Number
 },{

@@ -3,10 +3,6 @@ const dbConnection = require("../index")
 
 
 
-
-
-
-
 const userSchemma = mongoose.Schema({
     username: String,
     hashedPwd: String,

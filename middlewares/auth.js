@@ -9,7 +9,7 @@ const Authorization = (req, res, next) => {
     if(!authHeader){
         res.status(400).json({
             success:false,
-            msg:"Log in failed, invalid token, (code: -1)",
+            msg:"Log in failed, token required, (code: -1)",
         })
         return
     }
@@ -47,13 +47,17 @@ const Authorization = (req, res, next) => {
     }
     
     //validate exp date
-    if(verifyToken.exp > Date.now()){
+    if(verifyToken.exp < Date.now()){
+        console.log(verifyToken.exp)
+        console.log(Date.now())
         res.status(400).json({
             success:false,
             msg:"Log in failed, invalid token, (code: 3)",
         })
         return
     }
+    console.log(verifyToken.exp)
+    console.log(Date.now())
 
     req.credential = verifyToken
     next()

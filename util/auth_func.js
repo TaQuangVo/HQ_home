@@ -30,16 +30,16 @@ const validatePassword = (password, hashedPassword, salt) => {
 
 const issueToken = (user) => {
     const userId = user._id
-    const expiresIn = "1d"
+    const expireTime = Date.now() + 1000*60*60*24
 
     const payload = {
         sub:userId,
         role:user.role,
-        iat:Date.now()
+        iat:Date.now(),
+        exp:expireTime,
     }
 
     const signOptions = {
-        expiresIn:expiresIn,
         algorithm:"RS256"
     }
 
@@ -47,7 +47,7 @@ const issueToken = (user) => {
 
     return {
         token:"Bearer " + signedToken,
-        expiresIn:expiresIn
+        expireTime:expireTime
     }
 }
 
