@@ -92,7 +92,7 @@ userRouters.post("/register", (req, res)=>{
             username:username,
             hashedPwd:hashedPwd,
             salt:salt,
-            role:"guess"
+            role:"guest"
         })
 
         newUser

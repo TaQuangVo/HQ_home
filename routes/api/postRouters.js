@@ -11,7 +11,7 @@ const postRouters = Router();
 postRouters.post("/", Authorization, (req,res)=>{
 
     handlePostMediaUpload.single("image")(req,res, (err) => {
-
+        console.log(req.body)
         if(!req.body.description){
             res.status(400).json({
                 success: false,
@@ -65,7 +65,37 @@ postRouters.post("/", Authorization, (req,res)=>{
 })
 
 postRouters.get("/", Authorization, (req, res) => {
-    res.send("this route will return 5 most resent post associate to the signed in user")
+    const userRole = req.credential.role
+
+    postModel.find(userRole == "guest" && {isPublic:true})
+    .sort({createdAt:"desc"})
+    .limit(5)
+    .then(posts => {
+        if(posts.length == 0){
+            res.status(404).json({
+                success:false,
+                msg: "No post found",
+            })
+            return
+        }
+        res.status(200).json({
+            success:true,
+            msg: "Posts fetched successfully",
+            posts: posts
+        })
+    }).catch(err => {
+        res.status(500).json({
+            success:false,
+            msg: "Something gone wrong while fetching posts",
+            err: err
+        })
+    })
+})
+
+postRouters.delete("/:postId", Authorization, (req,res) => {
+    console.log(req.params)
+    console.log(req.query)
+    res.send("this route will delete a post")
 })
 
 module.exports = postRouters
