@@ -40,8 +40,9 @@ postRouters.post("/", Authorization, (req,res)=>{
             author:req.credential.sub,
             isPublic: true,
             description: req.body.description,
-            imageUrl: (req.file ? req.file.destination : ""),
-            imageName: (req.file ? req.file.filename : ""),
+            imageDir: (req.file ? req.file.destination+"/"+req.file.filename : ""),
+            imageUrl: `/api/media/post-images/${req.file.filename}`,
+            imageName: req.file.filename,
             likeCount: 0,
         })
 
@@ -92,10 +93,93 @@ postRouters.get("/", Authorization, (req, res) => {
     })
 })
 
-postRouters.delete("/:postId", Authorization, (req,res) => {
-    console.log(req.params)
-    console.log(req.query)
-    res.send("this route will delete a post")
+postRouters.delete("/:id", Authorization, (req,res) => {
+    const postId = req.params.id
+
+    postModel.findById(postId)
+    .then(post => {
+        if(!post){
+            res.status(404).json({
+                success:false,
+                msg:`No post with Id ${postId} found!`,
+            })
+            return
+        }
+        else if (post.author !== req.credential.sub){
+            res.status(401).json({
+                success:false,
+                msg:`Unauthorized to perform the action`,
+            })
+            return
+        }
+        post.delete()
+        .then(result => {
+            res.status(401).json({
+                success:true,
+                msg:`Post with Id ${postId} deleted successfully`,
+            })
+            return
+        }).catch(err => {
+            res.status(500).json({
+                success:false,
+                msg:`Something gone wrong`,
+                err: err
+            })
+            return
+        })
+    })
+
+})
+
+postRouters.put("/:id", Authorization, (req, res) => {
+    const postId = req.params.id
+    let newDescripton
+
+    if(!req.body.description){
+        res.status(400).json({
+            success:false,
+            msg:`New description to post is required`,
+        })
+        return
+    }else {
+        newDescripton = req.body.description
+    }
+
+    postModel.findById(postId)
+    .then(post => {
+        if(!post){
+            res.status(404).json({
+                success:false,
+                msg:`No post with Id ${postId} found!`,
+            })
+            return
+        }
+        else if (post.author !== req.credential.sub){
+            res.status(401).json({
+                success:false,
+                msg:`Unauthorized to perform the action`,
+            })
+            return
+        }
+
+        post.description = newDescripton
+        post.save()
+        .then(result => {
+            res.status(401).json({
+                success:true,
+                msg:`Post edited successfully`,
+                post:result
+            })
+            return
+        }).catch(err => {
+            res.status(500).json({
+                success:false,
+                msg:`Something gone wrong`,
+                err: err
+            })
+            return
+        })
+    })
 })
 
 module.exports = postRouters
