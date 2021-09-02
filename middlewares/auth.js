@@ -56,8 +56,6 @@ const Authorization = (req, res, next) => {
         })
         return
     }
-    console.log(verifyToken.exp)
-    console.log(Date.now())
 
     req.credential = verifyToken
     next()

@@ -34,6 +34,7 @@ const issueToken = (user) => {
 
     const payload = {
         sub:userId,
+        username:user.username,
         role:user.role,
         iat:Date.now(),
         exp:expireTime,
