@@ -40,9 +40,8 @@ postRouters.post("/", Authorization, (req,res)=>{
             author:req.credential.sub,
             isPublic: true,
             description: req.body.description,
-            imageDir: (req.file ? req.file.destination+"/"+req.file.filename : ""),
-            imageUrl: `/api/media/post-images/${req.file.filename}`,
-            imageName: req.file.filename,
+            imageUrl: (req.file ? `/api/media/post-images/${req.file.filename}` : ""),
+            imageName: (req.file ? req.file.filename : ""),
             likeCount: 0,
         })
 

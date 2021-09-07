@@ -30,6 +30,7 @@ messageRouters.get("/guest-room", Authorization, (req, res) => {
         })
     })
 })
+
 messageRouters.get("/admin-room", Authorization, (req, res) => {
     if(req.credential.role == "guest"){
         return res.status(403).json({
